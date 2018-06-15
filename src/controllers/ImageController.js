@@ -32,8 +32,8 @@ class ImageController {
     try {
       console.log(data);
       console.log('process');
-      const file = fs.createWriteStream(`./tmp/images/${key}`);
       const key = data.key;
+      const file = fs.createWriteStream(`./tmp/images/${key}`);
       const params = {
         Bucket: this.config.aws.bucket,
         Key: `images/${key}`,
@@ -42,7 +42,6 @@ class ImageController {
 
       this.s3.getObject(params).createReadStream().pipe(file)
         .on('finish', () => {
-          console.log('processes image');
           const filePath = `./tmp/images/${key}`;
           // console.log(filePath);
           Jimp.read(filePath).then((image) => {
