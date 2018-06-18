@@ -43,21 +43,26 @@ class ImageController {
       this.s3.getObject(params).createReadStream().pipe(file)
         .on('finish', () => {
           const filePath = `./tmp/images/${key}`;
-          // console.log(filePath);
+
           Jimp.read(filePath)
           .then((image) => {
-            const thumb = image.clone();
-            console.log(thumb);
+            // Clone image to generate the thumbnail
+            const thumb = image
+              .exifRotate()
+              .clone();
+            // Process the main image
             image
               .exifRotate()
               .scaleToFit(1080, 1920)
-              .quality(75)
+              .quality(90)
               .write(`./tmp/images/processed/${key}`, () => {
                 this.moveImageToS3(key, filePath);
                 console.log('moving');
+                // Process thumb
                 thumb
-                  .resize(200, 200)
-                  .quality(60)
+                  //.exifRotate()
+                  .scaleToFit(200, 200)
+                  .quality(75)
                   .write(`./tmp/images/thumbs/${key}`, () => {
                     console.log('write thumb');
                     this.moveThumbToS3(key, `./tmp/images/thumbs/${key}`);
