@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
 // Init dotenv config
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 export default {
   db: {
