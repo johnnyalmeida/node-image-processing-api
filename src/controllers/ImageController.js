@@ -1,7 +1,8 @@
 import fs from 'fs';
 import AWS from 'aws-sdk';
-import Logger from '../helpers/Logger';
 import Jimp from 'jimp';
+import request from 'request';
+import Logger from '../helpers/Logger';
 
 class ImageController {
   constructor(config) {
@@ -138,12 +139,33 @@ class ImageController {
           };
           console.log('thumb moved');
           console.log(file);
+          this.postBack(fileName, 'success');
         });
       });
     } catch (err) {
+      this.postBack(fileName, 'error');
       console.log(err);
       // Logger.throw(res, '2365958507', err);
     }
+  }
+
+
+  postBack(key, status) {
+    key = key.replace('.jpg', '');
+    console.log('posting image to processing api');
+    request.put(
+      `${this.config.media_share_api}/history/`,
+      {
+        json: { key, status },
+      },
+      (errRequest, response) => {
+        if (!errRequest && response.statusCode === 200) {
+          console.log(`posted back: ${key}`);
+        }
+        console.log(errRequest);
+        console.log(`error when posting back: ${key}`);
+      },
+    );
   }
 }
 
