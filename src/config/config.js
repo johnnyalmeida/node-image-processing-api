@@ -20,4 +20,5 @@ export default {
   port: process.env.PORT,
   body_limit: process.env.BODY_LIMIT,
   media_share_api: process.env.MEDIA_SHARE_API,
+  relative_temp_path: process.env.RELATIVE_TEMP_PATH,
 };

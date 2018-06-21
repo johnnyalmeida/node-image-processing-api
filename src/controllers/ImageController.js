@@ -34,7 +34,7 @@ class ImageController {
       console.log(data);
       console.log('process');
       const key = `${data.key}.jpg`;
-      const file = fs.createWriteStream(`../tmp/images/${key}`);
+      const file = fs.createWriteStream(`${this.config.relative_temp_path}tmp/images/${key}`);
       const params = {
         Bucket: this.config.aws.bucket,
         Key: `images/${key}`,
@@ -48,7 +48,7 @@ class ImageController {
         })
         .pipe(file)
         .on('finish', () => {
-          const filePath = `../tmp/images/${key}`;
+          const filePath = `${this.config.relative_temp_path}tmp/images/${key}`;
 
           Jimp.read(filePath)
           .then((image) => {
@@ -61,7 +61,7 @@ class ImageController {
               .exifRotate()
               .scaleToFit(1080, 1920)
               .quality(90)
-              .write(`../tmp/images/processed/${key}`, () => {
+              .write(`${this.config.relative_temp_path}tmp/images/processed/${key}`, () => {
                 this.moveImageToS3(key, filePath);
                 console.log('moving');
                 // Process thumb
@@ -69,9 +69,9 @@ class ImageController {
                   //.exifRotate()
                   .scaleToFit(200, 200)
                   .quality(75)
-                  .write(`../tmp/images/thumbs/${key}`, () => {
+                  .write(`${this.config.relative_temp_path}tmp/images/thumbs/${key}`, () => {
                     console.log('write thumb');
-                    this.moveThumbToS3(key, `../tmp/images/thumbs/${key}`);
+                    this.moveThumbToS3(key, `${this.config.relative_temp_path}tmp/images/thumbs/${key}`);
                   });
               });
           }).catch((err) => {
