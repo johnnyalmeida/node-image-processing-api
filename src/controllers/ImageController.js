@@ -41,11 +41,12 @@ class ImageController {
       };
       console.log('start process');
 
-      this.s3.getObject(params).createReadStream().pipe(file)
+      this.s3.getObject(params).createReadStream()
         .on('error', (error) => {
           console.log(error);
           this.postBack(data.key, 'error');
         })
+        .pipe(file)
         .on('finish', () => {
           const filePath = `./tmp/images/${key}`;
 
