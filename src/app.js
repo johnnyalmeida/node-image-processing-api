@@ -47,8 +47,6 @@ app.get(['/', '/status'], async (req, res) => {
   }
 });
 
-console.log(app.config);
-
 /* Instatiate routes */
 app.use('/user', userRoutes);
 app.use('/image', imageRoutes(app.config));
