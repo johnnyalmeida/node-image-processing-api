@@ -153,7 +153,6 @@ class ImageController {
     }
   }
 
-
   postBack(key, status) {
     key = key.replace('.jpg', '');
     console.log('posting image to processing api');
