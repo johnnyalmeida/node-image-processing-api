@@ -33,7 +33,7 @@ class ImageController {
     try {
       console.log(data);
       console.log('process');
-      const key = data.key;
+      const key = `${data.key}.jpg`;
       const file = fs.createWriteStream(`./tmp/images/${key}`);
       const params = {
         Bucket: this.config.aws.bucket,
@@ -42,6 +42,10 @@ class ImageController {
       console.log('start process');
 
       this.s3.getObject(params).createReadStream().pipe(file)
+        .on('error', (error) => {
+          console.log(error);
+          this.postBack(data.key, 'error');
+        })
         .on('finish', () => {
           const filePath = `./tmp/images/${key}`;
 
@@ -161,9 +165,10 @@ class ImageController {
       (errRequest, response) => {
         if (!errRequest && response.statusCode === 200) {
           console.log(`posted back: ${key}`);
+        } else {
+          console.log(errRequest);
+          console.log(`error when posting back: ${key}`);
         }
-        console.log(errRequest);
-        console.log(`error when posting back: ${key}`);
       },
     );
   }
